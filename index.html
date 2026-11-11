@@ -170,6 +170,15 @@ window.matchMedia('(min-width: 761px)').addEventListener('change', event => {
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
+// Give embedded PDFs a regular browser download URL in the portable edition.
+const embeddedResumeLinks = document.querySelectorAll('a[download][href^="data:application/pdf;base64,"]');
+if (embeddedResumeLinks.length) {
+  const encodedResume = embeddedResumeLinks[0].getAttribute('href').split(',')[1];
+  const resumeBytes = Uint8Array.from(atob(encodedResume), character => character.charCodeAt(0));
+  const resumeUrl = URL.createObjectURL(new Blob([resumeBytes], { type: 'application/pdf' }));
+  embeddedResumeLinks.forEach(link => { link.href = resumeUrl; });
+}
+
 </script>
 </body>
 </html>
